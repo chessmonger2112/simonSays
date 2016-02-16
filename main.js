@@ -5,14 +5,27 @@ $(function(){
   var theta = 0;
 
   app = {};
+  var colors = ["green", "red", "blue","yellow"];
 
   var Model = Backbone.Model.extend({
     defaults: {
       sequence : []
+    },
+    random : function(numOfColors){
+      this.set({sequence: []});
+      for (var index = 0; index < numOfColors; index ++)
+      {
+        var randomNumber = Math.random() * colors.length;
+        var randomIndex = Math.floor(randomNumber);
+        var randomColor = colors[randomIndex];
+        this.attributes.sequence.push(randomColor);
+      }
     }
   });
 
   player = new Model;
+  computer = new Model;
+
 
   app.AppView = Backbone.View.extend({
     el: '#container',
@@ -31,9 +44,10 @@ $(function(){
       player.attributes.sequence.push("green");
       this.blink(colorPressed);
     },
-    blink: function(color){
+    blink: function(color,delay){
       var colorLimit = 16777217 //256 ^ 3;
       var colorValue = 0;
+      //setTimeout using delay
       var colorTimer = setInterval(function(){
         var hex = colorValue.toString(16);
         var hexLength = hex.length;
