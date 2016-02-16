@@ -11,7 +11,8 @@ $(function(){
     defaults: {
       sequence : []
     },
-    random : function(numOfColors){
+    random : function(numOfColors)
+    {
       this.set({sequence: []});
       for (var index = 0; index < numOfColors; index ++)
       {
@@ -20,12 +21,21 @@ $(function(){
         var randomColor = colors[randomIndex];
         this.attributes.sequence.push(randomColor);
       }
+    },
+    blinks: function(){
+      var sequence = this.get("sequence");
+      var duration = 1000;
+      sequence.forEach(function(color,i){
+        var delay = i * duration;
+        var color = sequence[i];
+        console.log("the ", i, " th color in the sequence is ",color, " delay is ",delay);
+        setTimeout(x=> app.appView.blink(color,duration), delay);
+      });
     }
   });
 
   player = new Model;
   computer = new Model;
-
 
   app.AppView = Backbone.View.extend({
     el: '#container',
@@ -42,7 +52,7 @@ $(function(){
       var colorPressed = event.target.id
       console.log("The color pressed is ", colorPressed);
       player.attributes.sequence.push("green");
-      this.blink(colorPressed);
+      this.blink(colorPressed,1000);
     },
     blink: function(color,delay){
       var colorLimit = 16777217 //256 ^ 3;
@@ -63,12 +73,12 @@ $(function(){
         colorValue %= colorLimit;
       },15);
 
-      setTimeout(timeOut, 1000);
+      setTimeout(timeOut, delay);
 
       function timeOut()
       {
         console.log("Time out was called!!");
-        clearInterval(colorTimer)
+        clearInterval(colorTimer);
         $("#" + color).css("background-color", "#DDD");
       }
     }
@@ -77,29 +87,25 @@ $(function(){
 
 app.appView = new app.AppView();
 
-
-
  // var buttonTimer = setInterval(function(){
  //    borderRadius = Math.round(Math.abs(Math.sin(theta) * 50));
  //    theta+= .01;
  //    $("button").css("border-radius",borderRadius + "%")
  // },15);
-var fontSize = 32;
-var deltaFont = .25;
-var fontTimer = setInterval(function(){
-  if (fontSize > 50)
-  {
-    deltaFont *= -1;
-  }
-  else if(fontSize < 15)
-  {
-    deltaFont *= -1;
-  }
 
-  fontSize += deltaFont;
-  $("#header").css("font-size",fontSize + "px");
-}, 100)
+// var fontSize = 32;
+// var deltaFont = .25;
+// var fontTimer = setInterval(function(){
+//   if (fontSize > 50)
+//   {
+//     deltaFont *= -1;
+//   }
+//   else if(fontSize < 15)
+//   {
+//     deltaFont *= -1;
+//   }
 
-
-
+//   fontSize += deltaFont;
+//   $("#header").css("font-size",fontSize + "px");
+//   }, 100);
 });

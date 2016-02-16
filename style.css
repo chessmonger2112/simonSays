@@ -18,11 +18,11 @@ body{
   color: blue;
 }
 #container{
+  background-color: white;
   position: absolute;
+  width: 20%;
   top : 25%;
-  /*  margin-left: auto;
-    margin-right: auto;*/
-  left: 0;
+  left: 40%;  /* (100% - witdth) / 2*/
   right: 0;
 }
 
