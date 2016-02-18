@@ -2,23 +2,37 @@ body{
   text-align: center;
   background-color: #DDD
 }
-.red{
-  color: red;
+.color{
+  height: 100px;
+  width: 100px;
+  display: inline-block;
 }
-
-.yellow{
-  color: yellow;
-  /*background-color: #BBB;*/
+#green{
+  border-radius: 100% 0 0 0;
+  background-color: green;
 }
-.green{
-  color: green;
+#red{
+  border-radius: 0 100% 0 0;
+  background-color: red;
 }
-
+#yellow{
+  border-radius: 0 0 0 100%;
+  background-color: yellow;
+}
 .blue{
-  color: blue;
+  background-color: blue;
+  border-radius: 0 0 100% 0;
 }
+.colorContainer{
+  line-height: 0;
+}
+
+#gameOutcome{
+  color: white;
+}
+
 #container{
-  background-color: white;
+  margin-top: 10px;
   position: absolute;
   width: 20%;
   top : 25%;

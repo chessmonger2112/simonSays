@@ -3,13 +3,15 @@ $(function(){
   var backgroundColor = "#DDD"
   var borderRadius = 0;
   var theta = 0;
+  var gameOver = true;
   app = {};
   var colors = ["green", "red", "blue","yellow"];
 
   var Model = Backbone.Model.extend({
     defaults: {
       sequence : [],
-      numOfFlashes : 4
+      numOfFlashes : 4,
+      moves: 0
     },
     start : function()
     {
@@ -37,11 +39,43 @@ $(function(){
         console.log("the ", i, " th color in the sequence is ",color, " delay is ",delay);
         setTimeout(x=> app.appView.blink(color,duration), delay);
       });
-    }
+    },
+    reset: function(){
+      this.set({sequence: [],
+              moves: 0});
+      gameOver = false;
+    },
+    addColor: function(color){
+      var sequence = this.get("sequence");
+      var copySequence = sequence.slice(0,sequence.length); //why is this needed so comptuer model's value doesn't change?
+      copySequence.push(color);
+      player.set({sequence:copySequence});
+      this.compare();
+    },
+    compare: function(){
+      var movesPlayed = this.get("moves");
+      var mySequence = this.get("sequence");
+      var compSequence = computer.get("sequence");
+      if (mySequence[movesPlayed] != compSequence[movesPlayed])
+      {
+        $("#gameOutcome").show();
+        $("#gameOutcome").text("You fucking lost bro.");
+        $("#startButton").show();
+        gameOver = true;
+      }
+      movesPlayed += 1;
+      this.set({moves: movesPlayed});
+      if (movesPlayed === compSequence.length && !gameOver)
+      {
+        $("#gameOutcome").show();
+        $("#gameOutcome").text("Congrats!! You just fucking won bro!!");
+        $("#startButton").show();
+      }
+    },
   });
 
   player = new Model();
-  computer = new Model(); // seems to work it Model is not invoked.
+  computer = new Model(); // seems to work if Model is not invoked.
 
   app.AppView = Backbone.View.extend({
     el: '#container',
@@ -53,10 +87,7 @@ $(function(){
     color: function(event){
       var colorPressed = event.target.id
       console.log("The color pressed is ", colorPressed);
-      // player.attributes.sequence.push(colorPressed);  why does this change the value of the comptuer model?
-      var sequence = player.get("sequence").slice(0,player.get("sequence").length);
-      sequence.push(colorPressed);
-      player.set({sequence:sequence});
+      player.addColor(colorPressed);
       this.blink(colorPressed,1000);
     },
     blink: function(color,delay){
@@ -82,16 +113,19 @@ $(function(){
       function timeOut()
       {
         clearInterval(colorTimer);
-        $("#" + color).css("background-color", "#DDD");
+        $("#" + color).css("background-color", color);
       }
     }
   });
 
 app.StartButton = Backbone.View.extend({
   el: "#start",
-  events : {"click #startButton" : "test"},
-  test : function(){
+  events : {"click #startButton" : "start"},
+  start : function(){
     computer.start();
+    player.reset();
+    $("#startButton").hide();
+    $("#gameOutcome").hide();
   }
 });
 

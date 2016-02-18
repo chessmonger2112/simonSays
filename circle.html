@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .color{
+        height: 100px;
+        width: 100px;
+        display: inline-block;
+      }
+      div{
+        line-height: 0;
+      }
+      #topLeft{
+        border-radius: 100% 0 0 0;
+        background-color: green;
+      }
+      #topRight{
+        border-radius: 0 100% 0 0;
+        background-color: red;
+      }
+      #bottomRight{
+        border-radius: 0 0 100% 0;
+        background-color: yellow;
+      }
+      #bottomLeft{
+        border-radius: 0 0 0 100%;
+        background-color: blue;
+      }
+    </style>
+    <title>sup</title>
+  </head>
+  <body>
+    <div><span class="color" id="topLeft"></span><span class="color" id="topRight"></span></div><div><span class="color" id="bottomLeft"></span><span class="color" id="bottomRight"></span></div>
+  </body>
+</html>
