@@ -3,13 +3,19 @@ $(function(){
   var backgroundColor = "#DDD"
   var borderRadius = 0;
   var theta = 0;
-
   app = {};
   var colors = ["green", "red", "blue","yellow"];
 
   var Model = Backbone.Model.extend({
     defaults: {
-      sequence : []
+      sequence : [],
+      numOfFlashes : 4
+    },
+    start : function()
+    {
+      var numOfFlashes = this.get("numOfFlashes");
+      this.random(numOfFlashes);
+      this.blinks();
     },
     random : function(numOfColors)
     {
@@ -34,8 +40,8 @@ $(function(){
     }
   });
 
-  player = new Model;
-  computer = new Model;
+  player = new Model();
+  computer = new Model(); // seems to work it Model is not invoked.
 
   app.AppView = Backbone.View.extend({
     el: '#container',
@@ -44,20 +50,18 @@ $(function(){
     events: {
      "click .color" : "color"
     },
-    green:function(event){
-      console.log("green was clicked ",event);
-      eventG = event;
-    },
     color: function(event){
       var colorPressed = event.target.id
       console.log("The color pressed is ", colorPressed);
-      player.attributes.sequence.push("green");
+      // player.attributes.sequence.push(colorPressed);  why does this change the value of the comptuer model?
+      var sequence = player.get("sequence").slice(0,player.get("sequence").length);
+      sequence.push(colorPressed);
+      player.set({sequence:sequence});
       this.blink(colorPressed,1000);
     },
     blink: function(color,delay){
       var colorLimit = 16777217 //256 ^ 3;
       var colorValue = 0;
-      //setTimeout using delay
       var colorTimer = setInterval(function(){
         var hex = colorValue.toString(16);
         var hexLength = hex.length;
@@ -69,7 +73,7 @@ $(function(){
         var green = parseInt(hex.slice(2,4),16);
         var blue = parseInt(hex.slice(4,6),16);
         $("#" + color).css("background-color","rgb(" + red + "," + green + ","+ blue + ")");
-        colorValue +=4;
+        colorValue += 4;
         colorValue %= colorLimit;
       },15);
 
@@ -77,15 +81,22 @@ $(function(){
 
       function timeOut()
       {
-        console.log("Time out was called!!");
         clearInterval(colorTimer);
         $("#" + color).css("background-color", "#DDD");
       }
     }
   });
 
+app.StartButton = Backbone.View.extend({
+  el: "#start",
+  events : {"click #startButton" : "test"},
+  test : function(){
+    computer.start();
+  }
+});
 
-app.appView = new app.AppView();
+  app.appView = new app.AppView();
+  app.startButton = new app.StartButton();
 
  // var buttonTimer = setInterval(function(){
  //    borderRadius = Math.round(Math.abs(Math.sin(theta) * 50));
@@ -93,19 +104,19 @@ app.appView = new app.AppView();
  //    $("button").css("border-radius",borderRadius + "%")
  // },15);
 
-// var fontSize = 32;
-// var deltaFont = .25;
-// var fontTimer = setInterval(function(){
-//   if (fontSize > 50)
-//   {
-//     deltaFont *= -1;
-//   }
-//   else if(fontSize < 15)
-//   {
-//     deltaFont *= -1;
-//   }
+  // var fontSize = 32;
+  // var deltaFont = .25;
+  // var fontTimer = setInterval(function(){
+  //   if (fontSize > 50)
+  //   {
+  //     deltaFont *= -1;
+  //   }
+  //   else if(fontSize < 15)
+  //   {
+  //     deltaFont *= -1;
+  //   }
 
-//   fontSize += deltaFont;
-//   $("#header").css("font-size",fontSize + "px");
-//   }, 100);
+  //   fontSize += deltaFont;
+  //   $("#header").css("font-size",fontSize + "px");
+  //   }, 100);
 });
