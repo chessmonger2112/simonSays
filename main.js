@@ -5,12 +5,13 @@ $(function(){
   var theta = 0;
   var gameOver = true;
   app = {};
+  var originalFlashText = $("#flashes").text();
   var colors = ["green", "red", "blue","yellow"];
 
   var Model = Backbone.Model.extend({
     defaults: {
       sequence : [],
-      numOfFlashes : 4,
+      numOfFlashes : 1,
       moves: 0
     },
     start : function()
@@ -56,20 +57,20 @@ $(function(){
       var movesPlayed = this.get("moves");
       var mySequence = this.get("sequence");
       var compSequence = computer.get("sequence");
-      if (mySequence[movesPlayed] != compSequence[movesPlayed])
+      if (mySequence[movesPlayed] != compSequence[movesPlayed] && !gameOver)
       {
-        $("#gameOutcome").show();
-        $("#gameOutcome").text("You fucking lost bro.");
-        $("#startButton").show();
+        computer.set({numOfFlashes: 1});
         gameOver = true;
+        app.appView.lose();
       }
       movesPlayed += 1;
       this.set({moves: movesPlayed});
       if (movesPlayed === compSequence.length && !gameOver)
       {
-        $("#gameOutcome").show();
-        $("#gameOutcome").text("Congrats!! You just fucking won bro!!");
-        $("#startButton").show();
+        gameOver = true;
+        var flashes = computer.get("numOfFlashes");
+        app.appView.win();
+        computer.set({numOfFlashes: flashes + 1});
       }
     },
   });
@@ -89,6 +90,20 @@ $(function(){
       console.log("The color pressed is ", colorPressed);
       player.addColor(colorPressed);
       this.blink(colorPressed,1000);
+    },
+    lose : function(){
+      var flashes = computer.get("numOfFlashes");
+      $("#gameOutcome").show();
+      $("#gameOutcome").text("You fucking lost bro.");
+      $("#startButton").show();
+    },
+    win: function(){
+      $("#gameOutcome").show();
+      $("#gameOutcome").text("Congrats!! You just fucking won bro!!");
+      $("#startButton").show();
+      var flashes = computer.get("numOfFlashes");
+      // $("#flashes").text(originalFlashText + flashes);
+
     },
     blink: function(color,delay){
       var colorLimit = 16777217 //256 ^ 3;
@@ -126,6 +141,8 @@ app.StartButton = Backbone.View.extend({
     player.reset();
     $("#startButton").hide();
     $("#gameOutcome").hide();
+    var flashes = computer.get("numOfFlashes");
+    $("#flashes").text(originalFlashText + flashes);
   }
 });
 
